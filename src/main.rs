@@ -1,11 +1,13 @@
 use rocket::{
-    catch, catchers, get,
-    http::Status,
+    catch, catchers,
+    fairing::{Fairing, Info, Kind},
+    get,
+    http::{Header, Status},
     launch,
     response::status,
     routes,
     serde::json::{json, Value},
-    Request,
+    Request, Response,
 };
 
 mod controller;
@@ -20,9 +22,31 @@ fn home() -> status::Custom<Value> {
 fn default(status: Status, req: &Request) -> String {
     format!("{} ({})", status, req.uri())
 }
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![home])
+        .attach(CORS)
         .register("/", catchers![default])
 }
