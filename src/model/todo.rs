@@ -12,14 +12,8 @@ pub struct Todo {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InsertableTodo {
-    pub task_id: u64,
-    pub title: String,
-    pub description: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UpdatableTodo {
+pub struct InsertableUpdatableTodo {
+    pub task_id: i64,
     pub title: String,
     pub description: String,
 }
