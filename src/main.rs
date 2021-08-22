@@ -6,6 +6,10 @@ use rocket::{
     Request,
 };
 
+mod controller;
+mod model;
+mod service;
+
 #[get("/home")]
 fn home() -> Value {
     json! {"Hello"}
