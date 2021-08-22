@@ -13,6 +13,7 @@ use rocket::{
 mod controller;
 mod model;
 mod service;
+use controller::{create_one_todo, delete_one_todo, update_one_todo, view_one_todo};
 
 #[get("/home")]
 fn home() -> status::Custom<Value> {
@@ -46,7 +47,16 @@ impl Fairing for CORS {
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![home])
+        .mount(
+            "/",
+            routes![
+                home,
+                view_one_todo,
+                create_one_todo,
+                update_one_todo,
+                delete_one_todo,
+            ],
+        )
         .attach(CORS)
         .register("/", catchers![default])
 }
