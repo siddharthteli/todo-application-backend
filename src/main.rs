@@ -1,7 +1,9 @@
 use rocket::{
     catch, catchers, get,
     http::Status,
-    launch, routes,
+    launch,
+    response::status,
+    routes,
     serde::json::{json, Value},
     Request,
 };
@@ -11,8 +13,8 @@ mod model;
 mod service;
 
 #[get("/home")]
-fn home() -> Value {
-    json! {"Hello"}
+fn home() -> status::Custom<Value> {
+    status::Custom(Status::Ok, json! {"You are accessing home end point"})
 }
 #[catch(default)]
 fn default(status: Status, req: &Request) -> String {
