@@ -1,7 +1,9 @@
 use crate::model::*;
 use mongodb::{
+    bson,
     bson::{doc, Document},
     error::Error,
+    results::{DeleteResult, InsertOneResult, UpdateResult},
     Client, Collection,
 };
 pub struct Mongo_service;
@@ -13,18 +15,31 @@ impl Mongo_service {
         Ok(collection)
     }
     pub async fn view_one_todo(task_id: i64) -> Result<Document, Error> {
-        let collection=Mongo_service::connection().await?;
+        let collection = Mongo_service::connection().await?;
         let task_id_document = doc! {"task_id":task_id};
-        let todo_document=collection.find_one(task_id_document, None).await?.unwrap();
-        Ok(todo_document)
+        let todo_document_result = collection.find_one(task_id_document, None).await?.unwrap();
+        Ok(todo_document_result)
     }
-    pub async sfn create_one_todo(task: InsertableUpdatableTodo) -> Result<Document, Error> {
-        Ok(doc! {"Placeholder"})
+    pub async fn create_one_todo(task: InsertableUpdatableTodo) -> Result<InsertOneResult, Error> {
+        let collection = Mongo_service::connection().await?;
+        let task_document = bson::to_document(&task)?;
+        let todo_document_result = collection.insert_one(task_document, None).await?;
+        Ok(todo_document_result)
     }
-    pub async fn update_one_todo(task: InsertableUpdatableTodo) -> Result<Document, Error> {
-        Ok(doc! {"Placeholder"})
+    pub async fn update_one_todo(task: InsertableUpdatableTodo) -> Result<UpdateResult, Error> {
+        let collection = Mongo_service::connection().await?;
+        let document_filter = bson::to_document(&task.task_id)?;
+        let task_document = bson::to_document(&task)?;
+        let todo_document_result = collection
+            .update_one(document_filter, task_document, None)
+            .await?;
+        Ok(todo_document_result)
     }
-    pub async fn delete_one_todo(task_id: i64) -> Result<bool, Error> {
-        Ok(true)
+    pub async fn delete_one_todo(task_id: i64) -> Result<DeleteResult, Error> {
+        let collection = Mongo_service::connection().await?;
+        let document_filter = doc! {("task_id":task_id)};
+        let todo_document_result = collection.delete_one(document_filter, None).await?;
+
+        Ok(todo_document_result)
     }
 }
