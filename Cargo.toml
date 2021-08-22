@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 rocket={version="0.5.0-rc.1", features=["secrets","tls","json"]}
+mongodb ={version="1.2.2",default-features=false,features=["async-std-runtime"]}
+serde={version="1.0.126",features=["derive"]}
