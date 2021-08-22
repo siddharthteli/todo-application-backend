@@ -6,6 +6,8 @@ use rocket::{
     serde::json::{json, Value},
 };
 
+use crate::model::*;
+
 #[get("/view-one-todo")]
 fn view_one_todo() -> status::Custom<Value> {
     status::Custom(Status::Ok, json!({"Success":true}))
