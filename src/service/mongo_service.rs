@@ -27,10 +27,20 @@ impl Mongo_service {
         let todo_document_result = collection.find_one(task_id_document, None).await?.unwrap();
         Ok(todo_document_result)
     }
-    pub async fn create_one_todo(task: InsertableTodo) -> Result<InsertOneResult, Error> {
+    pub async fn create_one_todo(task: InsertableTodo) -> Result<Document, Error> {
         let collection = Mongo_service::connection().await?;
         let task_document = bson::to_document(&task)?;
-        let todo_document_result = collection.insert_one(task_document, None).await?;
+        let _todo_document_result = collection.insert_one(task_document, None).await?;
+        println!("{:?}", _todo_document_result.inserted_id);
+        let todo_document_result = Mongo_service::view_one_todo(
+            _todo_document_result
+                .inserted_id
+                .as_object_id()
+                .unwrap()
+                .clone(),
+        )
+        .await
+        .unwrap();
         Ok(todo_document_result)
     }
     pub async fn update_one_todo(task: UpdatableTodo) -> Result<Document, Error> {
