@@ -13,7 +13,7 @@ use rocket::{
 mod controller;
 mod model;
 mod service;
-use controller::{create_one_todo, delete_one_todo, update_one_todo, view_one_todo};
+use controller::{create_one_todo, delete_one_todo, update_one_todo, view_all_todo, view_one_todo};
 
 #[get("/home")]
 fn home() -> status::Custom<Value> {
@@ -51,6 +51,7 @@ fn rocket() -> _ {
             "/",
             routes![
                 home,
+                view_all_todo,
                 view_one_todo,
                 create_one_todo,
                 update_one_todo,
