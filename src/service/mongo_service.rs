@@ -33,13 +33,14 @@ impl Mongo_service {
         let todo_document_result = collection.insert_one(task_document, None).await?;
         Ok(todo_document_result)
     }
-    pub async fn update_one_todo(task: UpdatableTodo) -> Result<UpdateResult, Error> {
+    pub async fn update_one_todo(task: UpdatableTodo) -> Result<Document, Error> {
         let collection = Mongo_service::connection().await?;
-        let document_filter = doc! {"_id":task.task_id};
-        let task_document = doc! {"title":task.title,"description":task.description};
-        let todo_document_result = collection
+        let document_filter = doc! {"_id":task.task_id.clone()};
+        let task_document = doc! {"title":task.title.clone(),"description":task.description};
+        let _todo_document_result = collection
             .update_one(document_filter, task_document, None)
             .await?;
+        let todo_document_result = Mongo_service::view_one_todo(task.task_id).await.unwrap();
         Ok(todo_document_result)
     }
     pub async fn delete_one_todo(task_id: ObjectId) -> Result<DeleteResult, Error> {
