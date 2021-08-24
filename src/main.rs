@@ -19,11 +19,23 @@ use controller::{create_one_todo, delete_one_todo, update_one_todo, view_all_tod
 fn home() -> status::Custom<Value> {
     status::Custom(Status::Ok, json! {"You are accessing home end point"})
 }
+#[options("/home/<_id>")]
+fn home_options(_id: i32) -> status::Custom<Value> {
+    println!("Going into options");
+    status::Custom(Status::Ok, json! {"You are accessing home end point"})
+}
 
-#[delete("/home/<_id>")]
+/*#[delete("/home/<_id>")]
 fn home_delete(_id: i32) -> status::Custom<Value> {
     println!("Valueof someting:::-----{:?}", _id);
     status::Custom(Status::Ok, json! {"You are accessing home end point"})
+}
+*/
+#[delete("/home/<_id>")]
+fn home_delete(_id: i32) -> status::Custom<Value> {
+    println!("Valueof someting:::-----{:?}", _id.clone());
+    let message = json!({ "success": true, "message": "delete route", "data": _id});
+    status::Custom(Status::Ok, message)
 }
 #[put("/home")]
 fn home_put() -> status::Custom<Value> {
@@ -55,7 +67,6 @@ impl Fairing for CORS {
             "Access-Control-Allow-Methods",
             "POST, GET, PATCH, OPTIONS, DELETE",
         ));
-        response.set_header(Header::new("Access-Control-Request-Method", "DELETE"));
 
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
@@ -68,6 +79,7 @@ fn rocket() -> _ {
             "/",
             routes![
                 home,
+                home_options,
                 home_post,
                 home_put,
                 home_delete,
