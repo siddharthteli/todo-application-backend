@@ -50,7 +50,11 @@ impl Mongo_service {
         let _todo_document_result = collection
             .update_one(document_filter, task_document, None)
             .await?;
-        let todo_document_result = Mongo_service::view_one_todo(task.task_id).await.unwrap();
+        println!("Value of task_id{:?}", task.task_id.clone());
+        let todo_document_result =
+            Mongo_service::view_one_todo(ObjectId::with_string(&task.task_id).unwrap())
+                .await
+                .unwrap();
         Ok(todo_document_result)
     }
     pub async fn delete_one_todo(task_id: ObjectId) -> Result<DeleteResult, Error> {

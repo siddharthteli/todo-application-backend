@@ -19,8 +19,12 @@ pub struct InsertableTodo {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdatableTodo {
-    #[serde(rename = "_id")]
-    pub task_id: ObjectId,
+    pub task_id: String,
     pub title: String,
     pub description: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Omo {
+    pub title: String,
 }
